@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check in</title>
+
+    <script defer src="./face-api.min.js"></script>
+    <script defer src="./script.js"></script>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        #pic1 {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid green
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <video autoplay muted id="pic1" class="border-2 rounded-full border-green-300"></video>
+    <button id="take-pic" class="bg-green-500 p-2 rounded-md text-white capitalize">take picture</button>
+    <img id="captured-img" name="image" alt="Captured Image" />
+
+    <form enctype="multipart/form-data" class="flex flex-col gap-5">
+        <input type="text" name="nam" id="name" placeholder="Regnumber here"
+            class="border border-green-500 rounded-md p-2">
+        <!-- <input type="file" name="image" class="border border-green-500 rounded-md"> -->
+
+
+
+        <p class="text-center font-bold text-30">
+            Entered materials
+        </p>
+        <div class="flex flex-col gap-2">
+            <ol id="item-list" class="flex flex-col gap-2 border border-2 border-green-500 p-2 rounded-md">
+
+            </ol>
+            <input type="text" name="recorder" placeholder="Enter item here" id="item-name"
+                class="border border-green-500 p-2 rounded-md">
+            <button id="add-btn" class="font-bold border-green-500 border w-32 items-right rounded-md hover:bg-green-500
+            hover:text-white hover:border-2 border p-2">Add
+                M+</button>
+        </div>
+
+
+        <button class="bg-green-500 hover:bg-green-700 text-white font-bolder rounded-md px-2" id="check-in">Ckeck
+            in</button>
+    </form>
+</body>
+
+</html>
