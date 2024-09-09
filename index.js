@@ -1,14 +1,19 @@
 import express from "express";
 import multer from "multer";
 import fs from "fs";
+import router from "./routes/general_router.js";
+import mongoose from "mongoose";
+import Checkin from "./model/checkin.js";
 
 import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
 
-import mongoose from "mongoose";
-import Checkin from "./model/checkin.js";
+app.use(express());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(router);
 // import {fileURLToPath} from 'url';
 
 // const __filename = fileURLToPath(import.meta.url);
