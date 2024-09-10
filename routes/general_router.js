@@ -2,7 +2,7 @@
 import express from "express";
 import register from "../controllers/register.security.js";
 import securityLogin from "../controllers/login.security.js";
-import studentSignUp from "../controllers/registerStudent.js";
+import CheckOut from "../controllers/checkout.js";
 
 const router = express.Router();
 
@@ -10,6 +10,6 @@ router.post("/security", register);
 
 router.post("/security/login", securityLogin);
 
-router.post("/recognize-face", studentSignUp);
+router.put("/out/:id", CheckOut);
 
 export default router;

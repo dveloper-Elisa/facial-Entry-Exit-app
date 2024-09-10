@@ -93,12 +93,14 @@ app.post("/upload-new", async (req, res) => {
    */
 
   try {
-    const { name, items } = req.body;
+    const { name, items, sId } = req.body;
     console.log(name + " " + items);
     try {
       const recordItems = await Checkin.create({
         regNumber: name,
         materials: items,
+        status: "in",
+        sId,
       });
       if (recordItems) {
         res.json({ message: "Success full checked in" });

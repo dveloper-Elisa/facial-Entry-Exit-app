@@ -15,21 +15,18 @@ const securityLogin = async (req, res) => {
   try {
     const { Sname, password } = req.body;
 
-    const loggedInSecurity = await Security.findOne({
+    const security = await Security.findOne({
       $or: [{ telephone: Sname }, { email: Sname }],
     });
 
-    if (!loggedInSecurity) {
+    if (!security) {
       return res
         .status(404)
-        .json({ status: "Failure", message: "Invalid credentials" });
+        .json({ status: "Failure", message: "Security not found" });
     }
 
     // Compare the provided password with the hashed password from the database
-    const matchPassword = await bcrypt.compare(
-      password,
-      loggedInSecurity.password
-    );
+    const matchPassword = await bcrypt.compare(password, security.password);
 
     if (!matchPassword) {
       return res
@@ -40,9 +37,12 @@ const securityLogin = async (req, res) => {
       const generatedToken = { Sname, password };
       const token = generateToken(generatedToken);
 
-      return res
-        .status(200)
-        .json({ status: "Success", message: "Login successful !!", token });
+      return res.status(200).json({
+        status: "Success",
+        message: "Login successful !!",
+        token,
+        security,
+      });
     }
   } catch (error) {
     return res

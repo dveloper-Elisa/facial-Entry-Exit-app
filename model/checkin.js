@@ -4,6 +4,8 @@ const { model, Schema } = mongoose;
 const CheckinSchema = new Schema({
   regNumber: { type: String, required: true },
   materials: { type: Object, required: true },
+  status: { type: Object },
+  sId: { type: String, required: true },
 });
 
 const Checkin = model("Checkin", CheckinSchema);
