@@ -1,26 +1,226 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Admin</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input:focus {
+            border-color: #00a601;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00a601;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #008b00;
+        }
+
+        @media (max-width: 768px) {
+            form {
+                padding: 30px;
+            }
+
+            p {
+                font-size: 20px;
+            }
+
+            button {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <form>
+        <p>Super Security Login</p>
+        <div>
+            <div>
+                <input type="text" placeholder="User name" required>
+            </div>
+            <div>
+                <input type="password" placeholder="Your password" required>
+            </div>
+            <button type="submit">Login</button>
+        </div>
+    </form>
+
+</body>
+
+</html> -->
+
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security admin</title>
+    <title>Super Security Login</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        p {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
 
-    <form>
-        <p>Supper security Login</p>
+    <form id="loginForm">
+        <p>Super Security Login</p>
+        <div class="error" id="errorMsg"></div>
         <div>
             <div>
-                <input type="text" placeholder="User name">
+                <input type="text" id="username" placeholder="User name" required>
             </div>
             <div>
-                <input type="password" placeholder="Your password">
+                <input type="password" id="password" placeholder="Your password" required>
             </div>
-            <button>Login</button>
+            <button type="submit">Login</button>
         </div>
     </form>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault(); // Prevent the form from submitting the traditional way
+
+            const Sname = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Make sure both username and password are entered
+            if (!Sname || !password) {
+                document.getElementById('errorMsg').textContent = 'Please enter both username and password.';
+                return;
+            }
+
+            try {
+                // Make the POST request to /security/login
+                const response = await fetch('/security/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ Sname, password })
+                });
+
+                // Parse the JSON response
+                const data = await response.json();
+                console.log(data);
+                if (response.ok) {
+                    // If login is successful, store the role in localStorage
+                    localStorage.setItem('role', data.security.role);
+
+                    // Redirect to addsecurity.html
+                    window.location.href = 'addsecurity.html';
+                } else {
+                    // If login fails, display an error message
+                    document.getElementById('errorMsg').textContent = data.message || 'Login failed. Please try again.';
+                }
+            } catch (error) {
+                // Handle any other errors (e.g., network issues)
+                document.getElementById('errorMsg').textContent = 'An error occurred. Please try again.';
+            }
+        });
+    </script>
+
 </body>
 
 </html>

@@ -25,7 +25,7 @@ app.use(router);
 const PORT = process.env.PORT || 3001;
 
 app.use(express.static("public"));
-app.use(express.urlencoded({ extended: false, limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(express.json({ limit: "50mb" }));
 const dir = "public/labeled_images";
 

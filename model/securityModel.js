@@ -5,6 +5,7 @@ const SecuritySchema = mongoose.Schema({
   nid: { type: String, required: true },
   telephone: { type: String, required: true },
   email: { type: String },
+  role: { type: String, default: "sec" },
   password: { type: String, required: true },
 });
 

@@ -9,8 +9,7 @@ import bcrypt from "bcrypt";
  */
 const register = async (req, res) => {
   try {
-    const { name, nid, telephone, email, password } = req.body;
-    console.log(req.body);
+    const { name, nid, telephone, email, password, role } = req.body;
     // creating hashed password
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -25,6 +24,7 @@ const register = async (req, res) => {
       nid,
       telephone,
       email,
+      role,
       password: hashedPassword,
     });
 

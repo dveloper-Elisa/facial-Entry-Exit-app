@@ -1,6 +1,17 @@
 const imageUpload = document.getElementById("imageUpload");
 // const HOST_API = "http://localhost:3001";
 
+const verify = localStorage.getItem("sec");
+if (!verify) {
+  window.location = "/";
+  // return;
+}
+
+const logoutBtn = document.getElementById("logout-btn");
+logoutBtn.addEventListener("click", () => {
+  localStorage.removeItem("sec");
+  window.location.href = "/"; // Redirect to logout endpoint
+});
 /**
  * Handlering add item on list
  */
@@ -82,7 +93,7 @@ function takePicture() {
     },
     method: "POST",
     body: JSON.stringify({
-      image: canvas.toDataURL("image/png"),
+      image: canvas.toDataURL("image/png", 0.5),
       name: document.querySelector('input[id="name"]').value,
       items: items,
     }),
@@ -98,7 +109,7 @@ function takePicture() {
  */
 
 const regnumber = document.getElementById("name");
-const checkinbtn = document.getElementById("check-in");
+const checkinbtn = document.getElementById("take-pic");
 
 const checkIn = async () => {
   let name = regnumber.value;
