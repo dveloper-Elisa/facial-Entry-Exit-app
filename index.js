@@ -11,8 +11,8 @@ dotenv.config();
 const app = express();
 
 app.use(express());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
 app.use(router);
 // import {fileURLToPath} from 'url';
 
@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
-app.use(express.json({ limit: "50mb" }));
+app.use(express.json({ extended: true, limit: "50mb" }));
 const dir = "public/labeled_images";
 
 const storage = multer.diskStorage({
@@ -94,7 +94,7 @@ app.post("/upload-new", async (req, res) => {
 
   try {
     const { name, items, sId } = req.body;
-    console.log(name + " " + items);
+    // console.log(name + " " + items);
     try {
       const recordItems = await Checkin.create({
         regNumber: name,
