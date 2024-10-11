@@ -12,7 +12,7 @@ const register = async (req, res) => {
     const { name, nid, telephone, email, password, role } = req.body;
     // creating hashed password
     const hashedPassword = await bcrypt.hash(password, 10);
-
+console.log(req.body)
     const isSecurityExist = await Security.findOne({
       $or: [{ nid }, { telephone }],
     });
