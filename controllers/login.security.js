@@ -47,7 +47,7 @@ const securityLogin = async (req, res) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ status: "Failure", message: "Error !! Internal server error" });
+      .json({ status: "Failure", message: "Error !! Internal server error" ,error:error.message});
   }
 };
 

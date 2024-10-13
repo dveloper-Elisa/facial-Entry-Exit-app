@@ -1,0 +1,53 @@
+{
+  "theme_color": "#8936FF",
+  "background_color": "#2EC6FE",
+  "icons": [
+    {
+      "purpose": "maskable",
+      "sizes": "512x512",
+      "src": "icon.jpg",
+      "type": "image/jpg"
+    },
+    {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "icon.jpg",
+      "type": "image/jpg"
+    },
+    {
+        "purpose": "maskable",
+        "sizes": "144x144",
+        "src": "icon2.png",
+        "type": "image/png"
+      },
+      {
+        "purpose": "any",
+        "sizes": "144x144",
+        "src": "icon2.png",
+        "type": "image/png"
+      }
+  ],
+  "orientation": "any",
+  "display": "standalone",
+  "dir": "auto",
+  "lang": "en-US",
+  "name": "Facial entry and exit log app",
+  "short_name": "Facialy",
+  "start_url": "http://localhost:3001/index.html",
+  "scope": "http://localhost:3001/",
+
+  "screenshots":[
+    {
+        "src":"/s1.png",
+        "type":"image/png",
+        "sizes":"2880x1632",
+        "form_factor":"wide"
+    },
+    {
+        "src":"/s2.png",
+        "type":"image/png",
+        "sizes":"640x1632",
+        "form_factor":"narrow"
+    }
+  ]
+}

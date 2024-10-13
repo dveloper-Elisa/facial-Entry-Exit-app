@@ -8,11 +8,11 @@ import bcrypt from "bcrypt";
  * @returns {Promise<Response>} -return the promise as asyc function
  */
 const register = async (req, res) => {
+  console.log(req)
+  const { name, nid, telephone, email, password, role } = req.body;
   try {
-    const { name, nid, telephone, email, password, role } = req.body;
     // creating hashed password
     const hashedPassword = await bcrypt.hash(password, 10);
-console.log(req.body)
     const isSecurityExist = await Security.findOne({
       $or: [{ nid }, { telephone }],
     });
