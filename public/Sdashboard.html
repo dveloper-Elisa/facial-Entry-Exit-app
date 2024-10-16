@@ -20,6 +20,26 @@
             align-items: center;
             height: 100vh;
         }
+        .all{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .all .hed{
+            display: flex;
+            justify-content: space-between;
+        }
+        #student-list p{
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        #student-list p{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
 
         div.container {
             background-color: #fff;
@@ -97,13 +117,16 @@
 </head>
 
 <body>
-
+<div class="all">
+    <div class="hed">
+        <a href="./manage/control.html"> Manage</a>
+    <button id="logout">Logout</button>
+</div>
     <div class="container">
         <p>Security dashboard</p>
 
 
         <div class="checkin-container">
-            <button id="logout">Logout</button>
             <p>Checked In</p>
             <div id="student-list">
                 <!-- Student list will be displayed here -->
@@ -115,7 +138,7 @@
             <a href="home.html" id="Check-otut">CheckOut</a>
         </div>
     </div>
-
+</div>
 </body>
 
 <script>
@@ -134,8 +157,6 @@
     const checkedClient = async () => {
         // Check if sec is stored in localStorage
         const sec = localStorage.getItem("sec");
-
-        // Redirect to root ("/") if localStorage is empty or sec is not available
         if (!sec) {
             window.location.href = "/";
             return;
@@ -153,7 +174,6 @@
                 }
             });
 
-            // Check if the response is ok (status in the range 200-299)
             if (!response.ok) {
                 // Handle 404 or other error responses
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -168,11 +188,14 @@
                 const studentListDiv = document.getElementById("student-list");
 
                 // Loop through the students and display each student in the student-list div
-                students.data.forEach(student => {
+                // students.data.forEach(student => {
+                const checkin = students.data.filter(status => status.status === "in")
+                const checkout = students.data.filter(status => status.status === "out")
                     const studentItem = document.createElement("p");
-                    studentItem.innerHTML = student.regNumber + " <i style='color:blue; text-align:end'>" + student.status + "</i>"; // Assuming student object has a 'name' field
+                    studentItem.innerHTML = "No of checked In:: <strong style='color:blue; text-align:end'>" + checkin.length + "</strong>"; 
+                    studentItem.innerHTML += "No of checked out:: <strong style='color:blue; text-align:end'>" + checkout.length + "</strong>"; 
                     studentListDiv.appendChild(studentItem);
-                });
+                // });
 
             } else {
                 // If no students are checked in, display a message
@@ -192,7 +215,7 @@
         }
     };
 
-    // Call the function to fetch the checked-in clients when the page loads
+   
     checkedClient();
 </script>
 

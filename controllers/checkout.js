@@ -2,12 +2,11 @@ import Checkin from "../model/checkin.js";
 
 const CheckOut = async (req, res) => {
   try {
-    const { sId } = req.body;
+    const { sId, regNumber } = req.body;
     const { id } = req.params;
-    console.log(req.params);
 
     const person = await Checkin.findByIdAndUpdate(
-      { _id: id },
+      { _id: id ,regNumber:regNumber},
       { materials: [], status: "out", sId }
     );
 
@@ -16,7 +15,7 @@ const CheckOut = async (req, res) => {
     }
     return res
       .status(200)
-      .json({ status: "Success", messag: "Checked out Success fully!!!!" });
+      .json({ status: "Success", message: "Checked out Success fully!!!!" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

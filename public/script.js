@@ -89,27 +89,7 @@ async function takePicture() {
     img.src = canvas.toDataURL("image/png");
     console.log(img);
 
-    // You can also download the image or send it to a server
-    // For example, to download the image:
-    // const link = document.createElement("a");
-    // link.href = canvas.toDataURL("image/png");
-    // console.log(link);
 
-    // link.download = "captured-image.png";
-    // fetch("/upload-new", {
-    //   headers: {
-    //     "content-type": "application/json",
-    //   },
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     image: canvas.toDataURL("image/png", 0.5),
-    //     name: document.querySelector('input[id="name"]').value,
-    //     items: items,
-    //   }),
-    // })
-    //   .then((res) => res.json())
-    //   .then(console.log);
-    // link.click();
     const sId = JSON.parse(localStorage.getItem("sec")).id;
     console.log("sid", sId);
     const upload = await fetch("/upload-new", {
@@ -128,6 +108,8 @@ async function takePicture() {
       throw new Error(`HTTP error! Status: ${upload.status}`);
     }
     const res = await upload.json();
+    alert(res.message)
+    location.href ="./Sdashboard.html"
     return res;
   } catch (error) {
     console.log(error);

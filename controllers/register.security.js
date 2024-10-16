@@ -8,7 +8,6 @@ import bcrypt from "bcrypt";
  * @returns {Promise<Response>} -return the promise as asyc function
  */
 const register = async (req, res) => {
-  console.log(req)
   const { name, nid, telephone, email, password, role } = req.body;
   try {
     // creating hashed password
