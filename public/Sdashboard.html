@@ -142,6 +142,11 @@
 </body>
 
 <script>
+     const sec = localStorage.getItem("sec");
+        if (!sec || sec === "undefined" || sec == "") {
+            location.href = "/";
+        }
+
 
     /**
      * Logout Logic
@@ -154,9 +159,8 @@
         window.location.href = "/"
     })
     // Function to fetch checked-in clients and update the UI
-    const checkedClient = async () => {
+    checkedClient = async () => {
         // Check if sec is stored in localStorage
-        const sec = localStorage.getItem("sec");
         if (!sec) {
             window.location.href = "/";
             return;

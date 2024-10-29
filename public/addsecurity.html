@@ -220,11 +220,9 @@
          * Logout Button
         */
         document.getElementById('logoutBtn').addEventListener('click', function () {
-            // Clear any stored data (e.g., localStorage)
             localStorage.removeItem('role'); // Assuming 'role' is stored here
             localStorage.clear(); // Optionally clear all localStorage items
 
-            // Redirect to login page or home page
             window.location.href = '/'; // Replace with your login page
         });
     </script>

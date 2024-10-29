@@ -36,6 +36,7 @@ button.addEventListener("click", async (e) => {
     if (data) {
       messageSpan.textContent = "Login successful!";
       messageSpan.style.color = "green";
+      
 
       const logs = {
         name: data.security.name,

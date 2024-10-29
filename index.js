@@ -194,7 +194,7 @@ app.get("/material/:regNumber", async (req, res) => {
 mongoose
   .connect(
     process.env.CONNECTION_STRING_DB ||
-      "mongodb://127.0.0.1:27017/final-year-project"
+      "mongodb+srv://kwizeraelisa77:Elisa.123.@cluster0.zxtpk.mongodb.net/"
   )
   .then(() => {
     console.log("connected to MongoDB");

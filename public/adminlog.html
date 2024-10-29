@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="manifest" href="./app.webmanifest">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
+      border: 1px solid #4CAF50;
+      border-radius: 8px;
+      background-color: white;
+    }
+    span {
+      color: #4CAF50;
+    }
+    p {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+      text-transform: capitalize;
+    }
+    form div {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    input {
+      padding: 10px;
+      font-size: 18px;
+      border: 1px solid #4CAF50;
+      border-radius: 5px;
+      width: 100%;
+    }
+    button {
+      padding: 10px;
+      font-size: 18px;
+      color: white;
+      background-color: #4CAF50;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    button:active {
+      background-color: #3e8e41;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <form>
+      <span id="login-message"></span>
+      <p>Admin Login</p>
+      <div>
+        <div>
+          <input type="email" id="name" placeholder="User email here">
+        </div>
+        <div>
+          <input type="password" id="password" placeholder="Password here">
+        </div>
+        <div>
+          <button type="button" id="btn">Login</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <script>
+    const button = document.getElementById("btn");
+    const uname = document.getElementById("name");
+    const pwd = document.getElementById("password");
+    const messageSpan = document.getElementById("login-message");
+
+    button.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const Sname = uname.value.trim();
+      const password = pwd.value.trim();
+      
+      if (!Sname || !password) {
+        messageSpan.textContent = "Please fill in all fields.";
+        messageSpan.style.color = "red";
+        return;
+      }
+
+      // Show a loading state
+      button.textContent = "Logging in...";
+      button.disabled = true;
+
+      try {
+        const response = await fetch("/security/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ Sname, password }),
+        });
+
+        if (!response.ok) {
+          alert(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(data);
+
+        if (data && data.security.role === "admin") {
+          messageSpan.textContent = "Login successful!";
+          messageSpan.style.color = "green";
+          localStorage.setItem("admin", JSON.stringify(data.security));
+          window.location.href = "./admin.html";
+        } else {
+          messageSpan.textContent = data.message || "Login failed. Only admins can log in.";
+          messageSpan.style.color = "red";
+        }
+      } catch (error) {
+        console.error("Login error:", error.message);
+        messageSpan.textContent = "An error occurred during login. Please try again.";
+        messageSpan.style.color = "red";
+      } finally {
+        // Reset the button state
+        button.textContent = "Login";
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
