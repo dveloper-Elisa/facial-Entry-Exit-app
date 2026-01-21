@@ -87,7 +87,7 @@
 
   <div id="data">Loading models...</div>
 
-  <script>
+  <!-- <script>
     let detectedDescriptor = null;
     let canvas = null;
     let currentRecordId = null; // <-- store Mongo _id
@@ -228,7 +228,172 @@
         alert(err.message);
       }
     });
-  </script>
+  </script> -->
+
+
+
+<script>
+  let detectedDescriptor = null;
+  let canvas = null;
+  let currentRecordId = null;
+  let currentRegNumber = null;
+  let faceMatcher = null;
+
+  // Load models + known faces
+  window.addEventListener("load", async () => {
+    if (typeof faceapi === "undefined") {
+      document.getElementById("data").innerText = "❌ face-api failed to load";
+      return;
+    }
+
+    try {
+      await Promise.all([
+        faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+        faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+        faceapi.nets.ssdMobilenetv1.loadFromUri("/models")
+      ]);
+
+      const labeledDescriptors = await loadLabeledImages();
+      faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.6);
+
+      document.getElementById("data").innerText = "✅ Models loaded. Ready.";
+      startVideo();
+    } catch (err) {
+      console.error(err);
+      document.getElementById("data").innerText = "❌ Failed to load models";
+    }
+  });
+
+  function startVideo() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => video.srcObject = stream)
+      .catch(() => {
+        document.getElementById("data").innerText = "❌ Camera access denied";
+      });
+  }
+
+  // Capture face and identify user
+  document.getElementById("capture").addEventListener("click", async () => {
+    const video = document.getElementById("video");
+
+    const detections = await faceapi
+      .detectAllFaces(video)
+      .withFaceLandmarks()
+      .withFaceDescriptors();
+
+    if (!detections.length) {
+      document.getElementById("data").innerText = "❌ No face detected";
+      return;
+    }
+
+    detectedDescriptor = detections[0].descriptor;
+
+    const match = faceMatcher.findBestMatch(detectedDescriptor);
+
+    if (match.label === "unknown") {
+      document.getElementById("data").innerText = "❌ Face not recognized";
+      currentRegNumber = null;
+      currentRecordId = null;
+      return;
+    }
+
+    currentRegNumber = match.label;
+
+    // Draw face
+    if (canvas) canvas.remove();
+    canvas = faceapi.createCanvasFromMedia(video);
+    document.body.append(canvas);
+
+    const displaySize = {
+      width: video.offsetWidth,
+      height: video.offsetHeight
+    };
+
+    faceapi.matchDimensions(canvas, displaySize);
+    const resized = faceapi.resizeResults(detections, displaySize);
+    faceapi.draw.drawDetections(canvas, resized);
+    faceapi.draw.drawFaceLandmarks(canvas, resized);
+
+    await getMaterial(currentRegNumber);
+  });
+
+  async function getMaterial(regNumber) {
+    try {
+      const res = await fetch(`/material/${regNumber}`);
+      if (!res.ok) throw new Error("No materials found");
+
+      const data = await res.json();
+
+      currentRecordId = data._id;
+      currentRegNumber = data.regNumber;
+
+      const div = document.getElementById("data");
+      div.innerHTML = "";
+
+      const h3 = document.createElement("h3");
+      h3.innerText = `Reg: ${data.regNumber} (Status: ${data.status})`;
+
+      const ol = document.createElement("ol");
+      data.materials.forEach(m => {
+        const li = document.createElement("li");
+        li.innerText = m;
+        ol.append(li);
+      });
+
+      div.append(h3);
+      div.append(ol);
+    } catch (err) {
+      document.getElementById("data").innerText = "❌ No materials assigned";
+      currentRecordId = null;
+      currentRegNumber = null;
+    }
+  }
+
+  // Checkout
+  document.getElementById("checkout").addEventListener("click", async () => {
+    if (!currentRecordId) {
+      alert("Please detect a face first!");
+      return;
+    }
+
+    const security = JSON.parse(localStorage.getItem("sec"));
+    const sId = security.id;
+
+    try {
+      const res = await fetch(`/out/${currentRecordId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sId })
+      });
+
+      const message = await res.json();
+      alert(message.message);
+      location.reload();
+    } catch (err) {
+      alert("Checkout failed");
+    }
+  });
+
+  // Load labeled images
+  async function loadLabeledImages() {
+    const labels = await fetch("/labels.json").then(res => res.json());
+
+    return Promise.all(
+      labels.map(async label => {
+        const img = await faceapi.fetchImage(`/labeled_images/${label}/1.jpg`);
+        const detection = await faceapi
+          .detectSingleFace(img)
+          .withFaceLandmarks()
+          .withFaceDescriptor();
+
+        return new faceapi.LabeledFaceDescriptors(label, [
+          detection.descriptor
+        ]);
+      })
+    );
+  }
+</script>
+
 
 </body>
 </html>
