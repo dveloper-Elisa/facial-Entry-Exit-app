@@ -2,110 +2,233 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script defer src="face-api.min.js"></script>
-    <script defer src="upload.js"></script>
-    <title>Face Recognition</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-        video {
-            border: 2px solid #14a75d;
-            border-radius: 50%;
-            margin-bottom: 10px;
-            object-fit: cover;
-            box-shadow: solid #007bff;
-        }
+  <!-- Face API -->
+  <script defer src="./face-api.min.js"></script>
 
-        a,
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 5px;
-            /* Add some margin between as */
-        }
+  <title>Face Recognition Checkout</title>
 
-        button:hover {
-            background-color: #0056b3;
-        }
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding-top: 20px;
+    }
 
-        #data {
-            margin-top: 20px;
-            border: 2px #0056b3 solid;
-            border-radius: 10px;
-        }
+    video {
+      border: 3px solid #14a75d;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      width: 250px;
+      height: 250px;
+    }
 
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-    </style>
+    button,
+    a {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+      text-decoration: none;
+    }
+
+    button:hover,
+    a:hover {
+      background-color: #0056b3;
+    }
+
+    #data {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #fff;
+      min-width: 300px;
+      max-width: 400px;
+      text-align: left;
+      border: 2px solid #007bff;
+      font-weight: bold;
+    }
+
+    ol {
+      margin-top: 5px;
+      margin-left: 20px;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
 </head>
 
 <body>
-    <video id="video" width="200" height="200" muted autoplay></video>
-    <button id="capture">Capture</button>
-    <a href="./Sdashboard.html" id="backBtn">Back</a> <!-- New back button -->
-    <div id="data"></div>
+  <video id="video" muted autoplay></video>
 
-    <script>
-        // Load models from the face-api.js library
-        Promise.all([
-            faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
-            faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
-            faceapi.nets.faceRecognitionNet.loadFromUri('/models')
-        ]).then(startVideo);
+  <div>
+    <button id="capture">Capture Face</button>
+    <button id="checkout">Confirm Checkout</button>
+    <a href="./Sdashboard.html">Back</a>
+  </div>
 
-        function startVideo() {
-            navigator.mediaDevices.getUserMedia({ video: {} })
-                .then(stream => {
-                    const video = document.getElementById('video');
-                    video.srcObject = stream;
-                })
-                .catch(err => console.error(err));
-        }
+  <div id="data">Loading models...</div>
 
-        document.getElementById('capture').addEventListener('click', async () => {
-            const video = document.getElementById('video');
-            const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-                .withFaceLandmarks()
-                .withFaceDescriptors();
+  <script>
+    let detectedDescriptor = null;
+    let canvas = null;
+    let currentRecordId = null; // <-- store Mongo _id
+    let currentRegNumber = null;
 
-            if (detections.length > 0) {
-                // Draw detections on canvas (optional visualization)
-                const canvas = faceapi.createCanvasFromMedia(video);
-                document.body.append(canvas);
-                const displaySize = { width: video.width, height: video.height };
-                faceapi.matchDimensions(canvas, displaySize);
-                const resizedDetections = faceapi.resizeResults(detections, displaySize);
-                faceapi.draw.drawDetections(canvas, resizedDetections);
-                faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+    // Load models
+    window.addEventListener("load", async () => {
+      if (typeof faceapi === "undefined") {
+        document.getElementById("data").innerText = "❌ face-api failed to load";
+        return;
+      }
 
-                document.getElementById('data').innerHTML = 'Face detected!';
-            } else {
-                document.getElementById('data').innerHTML = 'No face detected!';
-            }
+      try {
+        await Promise.all([
+          faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+          faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+          faceapi.nets.ssdMobilenetv1.loadFromUri("/models")
+        ]);
+
+        document.getElementById("data").innerText = "✅ Models loaded. Ready.";
+        startVideo();
+      } catch (err) {
+        console.error(err);
+        document.getElementById("data").innerText = "❌ Failed to load models";
+      }
+    });
+
+    function startVideo() {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+          document.getElementById("video").srcObject = stream;
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("data").innerText = "❌ Camera access denied";
+        });
+    }
+
+    // Capture face and display materials
+    document.getElementById("capture").addEventListener("click", async () => {
+      const video = document.getElementById("video");
+
+      if (!faceapi.nets.ssdMobilenetv1.params) {
+        alert("Models not loaded yet");
+        return;
+      }
+
+      const detections = await faceapi.detectAllFaces(video)
+        .withFaceLandmarks()
+        .withFaceDescriptors();
+
+      if (detections.length === 0) {
+        detectedDescriptor = null;
+        currentRegNumber = null;
+        currentRecordId = null;
+        document.getElementById("data").innerText = "❌ No face detected";
+        return;
+      }
+
+      detectedDescriptor = detections[0].descriptor;
+
+      // Clear old canvas
+      if (canvas) canvas.remove();
+      canvas = faceapi.createCanvasFromMedia(video);
+      document.body.append(canvas);
+
+      // Use actual rendered video dimensions
+      const displaySize = { width: video.offsetWidth, height: video.offsetHeight };
+      faceapi.matchDimensions(canvas, displaySize);
+
+      const resizedDetections = faceapi.resizeResults(detections, displaySize);
+      faceapi.draw.drawDetections(canvas, resizedDetections);
+      faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+
+      // Identify user (for now hardcoded for testing, replace with face-matching logic)
+      currentRegNumber = "21RP00159"; // TODO: replace with actual matched label
+      await getMaterial(currentRegNumber);
+    });
+
+    async function getMaterial(regNumber) {
+      try {
+        const res = await fetch(`/material/${regNumber}`);
+        if (!res.ok) throw new Error("No materials found");
+
+        const data = await res.json();
+
+        // Store actual Mongo _id for checkout
+        currentRecordId = data._id;
+        currentRegNumber = data.regNumber;
+
+        const div = document.getElementById("data");
+        div.innerHTML = ""; // clear old data
+
+        const h3 = document.createElement("h3");
+        h3.innerText = `Reg: ${data.regNumber} (Status: ${data.status})`;
+
+        const ol = document.createElement("ol");
+        data.materials.forEach(m => {
+          const li = document.createElement("li");
+          li.innerText = m;
+          ol.append(li);
         });
 
+        div.append(h3);
+        div.append(ol);
+      } catch (err) {
+        console.error(err);
+        const div = document.getElementById("data");
+        div.innerHTML = "❌ No materials assigned";
+        currentRecordId = null;
+        currentRegNumber = null;
+      }
+    }
 
-    </script>
+    // Checkout
+    document.getElementById("checkout").addEventListener("click", async () => {
+      if (!currentRecordId) {
+        alert("Please detect a face first!");
+        return;
+      }
+
+      const security = JSON.parse(localStorage.getItem("sec"));
+      const sId = security.id;
+
+      try {
+        const res = await fetch(`/out/${currentRecordId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sId })
+        });
+
+        if (!res.ok) throw new Error("Checkout failed");
+
+        const message = await res.json();
+        alert(message.message);
+        window.location.href = "./manage/checkout.html";
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+  </script>
 
 </body>
-
 </html>

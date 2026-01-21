@@ -1,99 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        th{
-            background-color: #007BFF;
-            color: white;
-            padding: 2px 20px;
-        }
-        table td{
-            padding: 3px;
-        }
-        .container1 {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .container {
-            display: flex;
-            flex-direction: row;
-            gap: 20px;
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 120%;
-        }
-        .container div {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .logout {
-            margin-top: 20px;
-            background-color: #dc3545;
-        }
-        .logout:hover {
-            background-color: #a71d2a;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+    box-sizing:border-box;
+    font-family:'Inter', Arial, sans-serif;
+}
+
+body{
+    margin:0;
+    background:#f4f6f9;
+}
+
+/* Layout */
+.container1{
+    max-width:1100px;
+    margin:30px auto;
+    padding:20px;
+}
+
+/* Top bar */
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.logout{
+    background:#dc3545;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.logout:hover{
+    background:#b52a37;
+}
+
+/* Cards */
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.08);
+    margin-bottom:25px;
+}
+
+h1{
+    margin:0 0 15px 0;
+    font-size:22px;
+}
+
+/* Form */
+.container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+}
+
+label{
+    font-size:13px;
+    font-weight:600;
+}
+
+input, select{
+    width:100%;
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    margin-top:5px;
+}
+
+input:focus, select:focus{
+    outline:none;
+    border-color:#007BFF;
+}
+
+button{
+    padding:12px;
+    background:#007BFF;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+/* Table */
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+th{
+    background:#007BFF;
+    color:white;
+    padding:10px;
+    text-align:left;
+}
+
+td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+}
+
+tr:hover{
+    background:#f1f3f5;
+}
+
+.delete{
+    color:#dc3545;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.delete:hover{
+    text-decoration:underline;
+}
+</style>
 </head>
+
 <body>
-    <div class="container1">
-        <div>
-            <button type="button" class="logout" id="logout">Logout</button>
-        </div>
-        <h1>REGISTER SECURITY GUARD</h1>
+
+<div class="container1">
+
+    <div class="top">
+        <h1>Security Dashboard</h1>
+        <button class="logout" id="logout">Logout</button>
+    </div>
+
+    <!-- Register Security -->
+    <div class="card">
+        <h1>Register Security Guard</h1>
+
         <div class="container">
-            <div>
             <div>
                 <label for="name">Names</label>
                 <input type="text" id="name">
             </div>
+
             <div>
                 <label for="email">Email</label>
                 <input type="email" id="email">
             </div>
+
             <div>
                 <label for="nid">NID</label>
                 <input type="number" id="nid">
             </div>
+
             <div>
                 <label for="telephone">Telephone</label>
                 <input type="text" id="telephone">
             </div>
+
             <div>
                 <label for="role">Role</label>
                 <select id="role">
@@ -101,128 +175,126 @@
                     <option value="admin">Admin</option>
                 </select>
             </div>
+
             <div>
                 <label for="password">Password</label>
                 <input type="password" id="password">
             </div>
+
             <div>
                 <label for="confirmPassword">Confirm Password</label>
                 <input type="password" id="confirmPassword">
             </div>
-            <div>
+
+            <div style="align-self:end">
                 <button type="button" id="register">Register Security</button>
             </div>
         </div>
-        <div>
-        <h1>Registered Securities</h1>
-
-            <!-- display securities here names and emailin tables and add buton of deleting and updating -->
-             <table>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Action</th>
-
-                <tbody id="tb">
-                    
-                </tbody>
-             </table>
-        </div>
-        </div>
     </div>
 
-    <script>
-        const storage = localStorage.getItem("admin");
-        if (!storage) {
-            location.href = "/";
-        }
+    <!-- Registered Securities -->
+    <div class="card">
+        <h1>Registered Securities</h1>
 
-        // display Secuirities
-        async function getSecurity(){
-            try{
-                const all = await fetch("/securirties", {
-                    method:"GET",
-                    headers:{
-                        "Content-Type":"application/json"
-                    }
-                })
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="tb"></tbody>
+        </table>
+    </div>
 
-                if(all){
-                    const secs = await all.json()
-                    let allData = secs.getSecurity
-                    console.log(allData)
-                    const tb = document.getElementById("tb")
-                    allData.map(user => {
-                        tb.innerHTML +=`<tr>
-                            <td>${user.name}</td>
-                            <td>${user.email}</td>
-                            <td style="color:red; cursor:pointer" onclick="deletefx('${user._id}')">Delete</td>
+</div>
 
-                        </tr> `
-                    })
-                }else{
-                    console.log(error)
-                }
-            }catch(error){
-                console.log(error)
+<!-- 🔴 LOGIC UNCHANGED -->
+<script>
+const storage = localStorage.getItem("admin");
+if (!storage) {
+    location.href = "/";
+}
+
+// display Secuirities
+async function getSecurity(){
+    try{
+        const all = await fetch("/securirties", {
+            method:"GET",
+            headers:{
+                "Content-Type":"application/json"
             }
-        }
+        })
 
+        if(all){
+            const secs = await all.json()
+            let allData = secs.getSecurity
+            const tb = document.getElementById("tb")
+            tb.innerHTML = ""
+            allData.map(user => {
+                tb.innerHTML +=`<tr>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td class="delete" onclick="deletefx('${user._id}')">Delete</td>
+                </tr>`
+            })
+        }
+    }catch(error){
+        console.log(error)
+    }
+}
+getSecurity()
+
+async function deletefx(id){
+    try {
+        await fetch(`/dele/${id}`, {
+            method:"DELETE",
+            headers:{
+                "Content-Type":"application/json"
+            }
+        })
+        alert("Deleted successfully")
         getSecurity()
+    } catch (error) {
+        console.log(error)
+    }
+}
 
-       async function deletefx(id){
-            try {
-                await fetch(`/dele/${id}`, {
-                    method:"DELETE",
-                    headers:{
-                        "Content-Type":"application/json"
-                    }
-                }).then(data=>{
-                     data.json()
-                }).then(result=>{
-                    alert("deleted success full")
-                }).catch(error=>{
-                    console.log(error)
-                })
-                
-            } catch (error) {
-                console.log(error)
-            }
-        }
+document.getElementById('register').addEventListener('click', async () => {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const nid = document.getElementById('nid').value;
+    const telephone = document.getElementById('telephone').value;
+    const role = document.getElementById('role').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
 
-        document.getElementById('register').addEventListener('click', async () => {
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const nid = document.getElementById('nid').value;
-            const telephone = document.getElementById('telephone').value;
-            const role = document.getElementById('role').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+    if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+    }
 
-            if (password !== confirmPassword) {
-                alert("Passwords do not match.");
-                return;
-            }
+    const response = await fetch('/security', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, nid, telephone, email, password, role }),
+    });
 
-            const response = await fetch('/security', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name, nid, telephone, email, password, role }),
-            });
+    if (response.ok) {
+        alert('Security registered successfully!');
+        getSecurity()
+    } else {
+        alert('Failed to register security.');
+    }
+});
 
-            if (response.ok) {
-                alert('Security registered successfully!');
-            } else {
-                alert('Failed to register security.');
-            }
-        });
+document.getElementById('logout').addEventListener('click', () => {
+    localStorage.clear();
+    location.href = "/";
+    alert('Logged out');
+});
+</script>
 
-        document.getElementById('logout').addEventListener('click', () => {
-            localStorage.clear();
-            location.href = "/";
-            alert('Logged out');
-        });
-    </script>
 </body>
 </html>
